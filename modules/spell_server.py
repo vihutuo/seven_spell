@@ -1,7 +1,5 @@
 import requests
 import time
-import spell
-
 
 class GameClient:
     def __init__(self, base_url):

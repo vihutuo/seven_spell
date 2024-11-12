@@ -1,6 +1,6 @@
 import flet as ft
 from modules import mytimer
-
+from modules import spell_server as server
 
 def IndexView(page:ft.Page, params):
     def timer_end(e):
@@ -41,6 +41,9 @@ def IndexView(page:ft.Page, params):
     img_1 = ft.Image(src="images/m1.jpg", width=300)
     appbar = CreateAppBar()
     timer = mytimer.Countdown(10, timer_end)
+    game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
+    game_state = game_client.get_game_state()
+    print(f"Game state: {game_state}")
 
     page.views.append(ft.View(
         "/",
