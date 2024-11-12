@@ -1,5 +1,7 @@
 import flet as ft
-import mytimer
+from modules import mytimer
+
+
 def IndexView(page:ft.Page, params):
     def timer_end(e):
         print("Timer end")
@@ -38,7 +40,7 @@ def IndexView(page:ft.Page, params):
     btn_simple = ft.ElevatedButton("Simple View", on_click=btn_simple_clicked)
     img_1 = ft.Image(src="images/m1.jpg", width=300)
     appbar = CreateAppBar()
-    timer = mytimer.Countdown(10,timer_end)
+    timer = mytimer.Countdown(10, timer_end)
 
     page.views.append(ft.View(
         "/",
