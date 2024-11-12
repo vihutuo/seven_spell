@@ -1,5 +1,6 @@
 import requests
 import time
+import spell
 
 
 class GameClient:
