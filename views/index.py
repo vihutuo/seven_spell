@@ -8,7 +8,7 @@ from modules import spell_server as server
 def IndexView(page:ft.Page, params):
     def timer_end(e):
         print("Timer end")
-        timer.restart_timer()
+        #timer.restart_timer()
     def CreateAppBar():
         app_bar = ft.AppBar(
             leading=ft.Image("images/csc_logo_100.png"),
@@ -43,29 +43,35 @@ def IndexView(page:ft.Page, params):
     btn_simple = ft.ElevatedButton("Simple View", on_click=btn_simple_clicked)
 
     appbar = CreateAppBar()
-    timer = mytimer.Countdown(10, timer_end)
+
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
     game_state = game_client.get_game_state()
-    word = game_state["current_word"]
+    timer = mytimer.Countdown(game_state["time_remaining"], timer_end)
+    print(game_state)
+    word = game_state["current_word"].upper()
     #word = "bright"
     print(word)
+
     top_row_buttons = ft.Row( spacing=10,
         alignment=ft.MainAxisAlignment.CENTER)
 
-    lst_top_buttons = []
-    for i in range(len(word)):
-        bt = ft.OutlinedButton(" ")
-        lst_top_buttons.append(bt)
-        top_row_buttons.controls.append(bt)
-
+    
     bottom_row_buttons = ft.Row( spacing=10,
         alignment=ft.MainAxisAlignment.CENTER)
 
+
+  
+  
+
     lst_bottom_buttons = []
+    lst_top_buttons = []
     for x in word:
-        bt = ft.FilledButton(x)
-        lst_bottom_buttons.append(bt)
-        bottom_row_buttons.controls.append(bt)
+        bt1 = ft.OutlinedButton(" ")
+        bt2 = ft.FilledButton(x)
+        lst_top_buttons.append(bt1)
+        top_row_buttons.controls.append(bt1)
+        lst_bottom_buttons.append(bt2)
+        bottom_row_buttons.controls.append(bt2)
 
 
     third_row_buttons = ft.Row(spacing=200,
@@ -89,7 +95,9 @@ def IndexView(page:ft.Page, params):
     page.views.append(ft.View(
         "/",
         [appbar, col_right, btn_question1,
+
          btn_question2, btn_simple, timer, top_row_buttons, bottom_row_buttons,third_row_buttons],
+
 
     )
     )
