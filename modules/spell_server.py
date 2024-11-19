@@ -1,5 +1,8 @@
 import requests
 import time
+from datetime import datetime
+
+import math
 
 class GameClient:
     def __init__(self, base_url):
@@ -10,7 +13,15 @@ class GameClient:
         response = requests.get(f"{self.base_url}/game-state")
 
         if response.status_code == 200:
-            return response.json()
+            gs =  response.json()
+            time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+            gs["time_remaining"]= datetime.strptime(gs["score_submission_deadline_utc"], time_format) -  datetime.strptime(gs["current_time_utc"],time_format)
+            gs["time_remaining"] = int(gs["time_remaining"].total_seconds())
+            gs["next_round_starts_in"] = datetime.strptime(gs["game_end_time_utc"],
+                                                     time_format) - datetime.strptime(gs["current_time_utc"],
+                                                                                      time_format)
+            gs["next_round_starts_in"] = math.ceil((gs["next_round_starts_in"].total_seconds()))
+            return gs
         else:
             raise Exception(f"Failed to fetch game state: {response.text}")
 
