@@ -7,7 +7,7 @@ from modules import spell_server as server
 def IndexView(page:ft.Page, params):
     def timer_end(e):
         print("Timer end")
-        timer.restart_timer()
+        #timer.restart_timer()
     def CreateAppBar():
         app_bar = ft.AppBar(
             leading=ft.Image("images/csc_logo_100.png"),
@@ -42,9 +42,10 @@ def IndexView(page:ft.Page, params):
     btn_simple = ft.ElevatedButton("Simple View", on_click=btn_simple_clicked)
 
     appbar = CreateAppBar()
-    timer = mytimer.Countdown(10, timer_end)
+
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
     game_state = game_client.get_game_state()
+    timer = mytimer.Countdown(game_state["time_remaining"], timer_end)
     print(game_state)
     word = game_state["current_word"].upper()
     #word = "bright"
