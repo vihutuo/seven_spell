@@ -45,7 +45,7 @@ def IndexView(page:ft.Page, params):
     timer = mytimer.Countdown(10, timer_end)
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
     game_state = game_client.get_game_state()
-    word = game_state["current_word"]
+    word = game_state["current_word"].upper()
     #word = "bright"
     print(word)
     top_row_buttons = ft.Row()
