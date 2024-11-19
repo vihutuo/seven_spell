@@ -1,4 +1,5 @@
 import flet as ft
+
 from flet_core import OutlinedButton
 
 from modules import mytimer
@@ -50,8 +51,18 @@ def IndexView(page:ft.Page, params):
     word = game_state["current_word"].upper()
     #word = "bright"
     print(word)
-    top_row_buttons = ft.Row()
-    bottom_row_buttons = ft.Row()
+
+    top_row_buttons = ft.Row( spacing=10,
+        alignment=ft.MainAxisAlignment.CENTER)
+
+    
+    bottom_row_buttons = ft.Row( spacing=10,
+        alignment=ft.MainAxisAlignment.CENTER)
+
+
+  
+  
+
     lst_bottom_buttons = []
     lst_top_buttons = []
     for x in word:
@@ -62,10 +73,32 @@ def IndexView(page:ft.Page, params):
         lst_bottom_buttons.append(bt2)
         bottom_row_buttons.controls.append(bt2)
 
+
+    third_row_buttons = ft.Row(spacing=200,
+        alignment=ft.MainAxisAlignment.CENTER)
+
+    submit_button = ft.OutlinedButton("Submit")
+    clear_button = ft.OutlinedButton("Clear")
+
+    third_row_buttons.controls.append(submit_button)
+    third_row_buttons.controls.append(clear_button)
+
+
+
+
+
+
+
+
+
+
     page.views.append(ft.View(
         "/",
         [appbar, col_right, btn_question1,
-         btn_question2, btn_simple, timer, top_row_buttons, bottom_row_buttons],
+
+         btn_question2, btn_simple, timer, top_row_buttons, bottom_row_buttons,third_row_buttons],
+
+
     )
     )
     page.update()
