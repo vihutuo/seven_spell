@@ -49,20 +49,17 @@ def IndexView(page:ft.Page, params):
     #word = "bright"
     print(word)
     top_row_buttons = ft.Row()
-
-    lst_top_buttons = []
-    for i in range(len(word)):
-        bt = ft.OutlinedButton(" ")
-        lst_top_buttons.append(bt)
-        top_row_buttons.controls.append(bt)
-
     bottom_row_buttons = ft.Row()
-
     lst_bottom_buttons = []
+    lst_top_buttons = []
     for x in word:
-        bt = ft.FilledButton(x)
-        lst_bottom_buttons.append(bt)
-        bottom_row_buttons.controls.append(bt)
+        bt1 = ft.OutlinedButton(" ")
+        bt2 = ft.FilledButton(x)
+
+        lst_top_buttons.append(bt1)
+        top_row_buttons.controls.append(bt1)
+        lst_bottom_buttons.append(bt2)
+        bottom_row_buttons.controls.append(bt2)
 
     page.views.append(ft.View(
         "/",
