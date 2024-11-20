@@ -1,4 +1,6 @@
 import flet as ft
+from flet_core import OutlinedButton
+
 from modules import mytimer
 from modules import spell_server as server
 
@@ -38,16 +40,34 @@ def IndexView(page:ft.Page, params):
     btn_question1 = ft.ElevatedButton("Question1", on_click=btn_question1_clicked)
     btn_question2 = ft.ElevatedButton("Question2", on_click=btn_question2_clicked)
     btn_simple = ft.ElevatedButton("Simple View", on_click=btn_simple_clicked)
-    img_1 = ft.Image(src="images/m1.jpg", width=300)
+
     appbar = CreateAppBar()
     timer = mytimer.Countdown(10, timer_end)
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
     game_state = game_client.get_game_state()
-    print(f"Game state: {game_state}")
+    word = game_state["current_word"]
+    #word = "bright"
+    print(word)
+    top_row_buttons = ft.Row()
+
+    lst_top_buttons = []
+    for i in range(len(word)):
+        bt = ft.OutlinedButton(" ")
+        lst_top_buttons.append(bt)
+        top_row_buttons.controls.append(bt)
+
+    bottom_row_buttons = ft.Row()
+
+    lst_bottom_buttons = []
+    for x in word:
+        bt = ft.FilledButton(x)
+        lst_bottom_buttons.append(bt)
+        bottom_row_buttons.controls.append(bt)
 
     page.views.append(ft.View(
         "/",
-        [appbar, col_right, btn_question1, btn_question2, btn_simple, img_1, timer],
+        [appbar, col_right, btn_question1,
+         btn_question2, btn_simple, timer, top_row_buttons, bottom_row_buttons],
 
     )
     )
