@@ -100,8 +100,7 @@ def IndexView(page:ft.Page, params):
     def new_round(event=None):
         load_game_state()
         if game_state["time_remaining"] <= 3:
-            status_message_box.value = "Waiting to start next round in " + str(
-                game_state["next_round_starts_in"]) + " sec"
+            status_message_box.value = "Waiting to start next round "
             start_main_timer(game_state["next_round_starts_in"], new_round)
             page.update()
             return
@@ -115,6 +114,8 @@ def IndexView(page:ft.Page, params):
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
+        submit_button.disabled = False
+        show_status_message("")
         page.update()
 
     def CreateAppBar():
