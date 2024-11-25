@@ -5,10 +5,10 @@ from modules import spell_server as server
 def IndexView(page:ft.Page, params):
     def show_status_message(msg):
         status_message_box.value = msg
-    def start_main_timer(seconds,function):
+    def start_main_timer(seconds,on_end):
         # helper function that starts main timer
         main_timer.initial_seconds = seconds
-        main_timer.on_end = function
+        main_timer.on_end = on_end
         main_timer.start()
     def score_submit_event(e):
         game_client.submit_score(player_name,score,main_word.lower())
@@ -109,7 +109,6 @@ def IndexView(page:ft.Page, params):
         bottom_row_buttons.controls.clear()
         for x in main_word:
             bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked)
-
             bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x)
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
