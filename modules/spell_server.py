@@ -1,7 +1,6 @@
 import requests
 import time
 from datetime import datetime
-
 import math
 
 class GameClient:

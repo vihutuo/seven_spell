@@ -7,14 +7,16 @@ class Countdown(ft.Text):
         self.initial_seconds = seconds
         self.seconds = seconds
         self.on_end = on_end
-    def restart_timer(self):
-        self.seconds = self.initial_seconds
+        self.running = False
+    def start(self):
         self.running = True
         self.page.run_task(self.update_timer)
+    def reset_timer(self):
+        self.seconds = self.initial_seconds
+
+
     def did_mount(self):
-        self.restart_timer()
-
-
+        self.reset_timer()
     def will_unmount(self):
         self.running = False
 

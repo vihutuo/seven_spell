@@ -95,6 +95,8 @@ def IndexView(page:ft.Page, params):
             bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x)
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
+        main_timer.start()
+        page.update()
 
     def CreateAppBar():
         app_bar = ft.AppBar(
@@ -129,26 +131,24 @@ def IndexView(page:ft.Page, params):
     third_row_buttons.controls.append(submit_button)
     third_row_buttons.controls.append(clear_button)
     user_words_textbox=ft.Text("")
-    new_round(main_word)
+
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
-    print(all_words[1:10])
-    print("ten")
     user_words=[]
     score_text=ft.Text("0")
     score_row=ft.Row(controls=[ft.Text("Score"),score_text])
-    timer = mytimer.Countdown(game_state["time_remaining"]-3, timer_end)
+    main_timer = mytimer.Countdown(game_state["time_remaining"]-3, timer_end)
     status_message_box=ft.Text()
     page.views.append(ft.View(
         "/",
-        [appbar,score_row, timer, top_row_buttons, bottom_row_buttons,
+        [appbar,score_row, main_timer, top_row_buttons, bottom_row_buttons,
          third_row_buttons,status_message_box,user_words_textbox],
 
 
     )
     )
-
-    if game_state["time_remaining"] > 0:
-        pass
+    page.update()
+    if game_state["time_remaining"] >= 3:
+        new_round(main_word)
     else:
         status_message_box.value="Waiting to start next round in "+str(game_state["next_round_starts_in"])+" sec"
-    page.update()
+
