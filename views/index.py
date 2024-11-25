@@ -3,6 +3,11 @@ from modules import mytimer
 from modules import my_module
 from modules import spell_server as server
 def IndexView(page:ft.Page, params):
+    def start_main_timer(seconds,function):
+        # helper function that starts main timer
+        main_timer.initial_seconds = seconds
+        main_timer.on_end = function
+        main_timer.start()
     def score_submit_event(e):
         game_client.submit_score(player_name,score,main_word.lower())
         submit_button.disabled=True
@@ -92,6 +97,13 @@ def IndexView(page:ft.Page, params):
         main_word = game_state["current_word"].upper()
     def new_round(event=None):
         load_game_state()
+        if game_state["time_remaining"] <= 3:
+            status_message_box.value = "Waiting to start next round in " + str(
+                game_state["next_round_starts_in"]) + " sec"
+            start_main_timer(game_state["next_round_starts_in"], new_round)
+            page.update()
+            return
+
         top_row_buttons.controls.clear()
         bottom_row_buttons.controls.clear()
         for x in main_word:
@@ -100,9 +112,7 @@ def IndexView(page:ft.Page, params):
             bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x)
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
-        main_timer.initial_seconds=game_state["time_remaining"]
-        main_timer.on_end = score_submit_event
-        main_timer.start()
+        start_main_timer(game_state["time_remaining"], score_submit_event)
         page.update()
 
     def CreateAppBar():
@@ -121,12 +131,8 @@ def IndexView(page:ft.Page, params):
     main_word = ""
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
 
-
     appbar = CreateAppBar()
-    load_game_state()
-    print(game_state)
-    #word = "LOOP"
-    print(main_word)
+
     top_row_buttons = ft.Row(spacing=10,
         alignment=ft.MainAxisAlignment.CENTER)
     bottom_row_buttons = ft.Row(spacing=10,
@@ -144,7 +150,7 @@ def IndexView(page:ft.Page, params):
     user_words=[]
     score_text=ft.Text("0")
     score_row=ft.Row(controls=[ft.Text("Score"),score_text])
-    main_timer = mytimer.Countdown(game_state["time_remaining"], score_submit_event)
+    main_timer = mytimer.Countdown(0, score_submit_event)
     status_message_box=ft.Text()
     page.views.append(ft.View(
         "/",
@@ -155,11 +161,4 @@ def IndexView(page:ft.Page, params):
     )
     )
     page.update()
-    if game_state["time_remaining"] >= 3:
-        new_round(main_word)
-    else:
-        status_message_box.value="Waiting to start next round in "+str(game_state["next_round_starts_in"])+" sec"
-        main_timer.initial_seconds = game_state["next_round_starts_in"]
-        main_timer.on_end = new_round
-        main_timer.start()
-        page.update()
+    new_round()
