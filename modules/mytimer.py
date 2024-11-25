@@ -10,6 +10,7 @@ class Countdown(ft.Text):
         self.running = False
     def start(self):
         self.running = True
+        self.seconds = self.initial_seconds
         self.page.run_task(self.update_timer)
     def reset_timer(self):
         self.seconds = self.initial_seconds

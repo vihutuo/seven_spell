@@ -15,7 +15,7 @@ class GameClient:
             gs =  response.json()
             time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
             gs["time_remaining"]= datetime.strptime(gs["score_submission_deadline_utc"], time_format) -  datetime.strptime(gs["current_time_utc"],time_format)
-            gs["time_remaining"] = int(gs["time_remaining"].total_seconds())
+            gs["time_remaining"] = int(gs["time_remaining"].total_seconds()) - 3 # 3 seconds buffer
             gs["next_round_starts_in"] = datetime.strptime(gs["game_end_time_utc"],
                                                      time_format) - datetime.strptime(gs["current_time_utc"],
                                                                                       time_format)
