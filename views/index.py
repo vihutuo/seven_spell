@@ -16,19 +16,21 @@ def IndexView(page:ft.Page, params):
         status_message_box.value="Score submitted. Waiting for result"
         start_main_timer(5,fetch_results)
         page.update()
+
+
     def fetch_results(e):
        all_scores=game_client.fetch_scores()
-       print(all_scores)
+       scores_dialog.content.value =all_scores
+
+       page.open(scores_dialog)
+
        start_main_timer(12,new_round)
     def score_submit_screen():
         dlg_modal = ft.AlertDialog(
             modal=True,
-            title=ft.Text("Please confirm"),
+            title=ft.Text("Scores"),
             content=ft.Text("Do you really want to delete all those files?"),
-            actions=[
-                ft.TextButton("Yes"),
-                ft.TextButton("No"),
-            ],
+
             actions_alignment=ft.MainAxisAlignment.END,
             on_dismiss=lambda e: page.add(
                 ft.Text("Modal dialog dismissed"),
@@ -102,6 +104,8 @@ def IndexView(page:ft.Page, params):
         game_state = game_client.get_game_state()
         main_word = game_state["current_word"].upper()
     def new_round(event=None):
+        scores_dialog.open = False
+
         load_game_state()
         if game_state["time_remaining"] <= 3:
             status_message_box.value = "Waiting to start next round "
@@ -163,6 +167,12 @@ def IndexView(page:ft.Page, params):
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
 
     status_message_box=ft.Text()
+    scores_dialog = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Scores"),
+        content=ft.Text(""),
+        actions_alignment=ft.MainAxisAlignment.END
+    )
     page.views.append(ft.View(
         "/",
         [appbar,score_row,  top_row_buttons, bottom_row_buttons,
