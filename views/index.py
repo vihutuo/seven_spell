@@ -3,6 +3,13 @@ from modules import mytimer
 from modules import my_module
 from modules import spell_server as server
 def IndexView(page:ft.Page, params):
+    def page_on_connect(e):
+         print("Session connect")
+
+    def page_on_disconnect(e):
+        print("Session disconnect")
+        nonlocal  is_game_active
+        is_game_active = False
     def show_status_message(msg):
         status_message_box.value = msg
     def start_main_timer(seconds,on_end):
@@ -99,11 +106,14 @@ def IndexView(page:ft.Page, params):
     def load_game_state():
         nonlocal game_state
         nonlocal main_word
-        nonlocal score
         game_state = game_client.get_game_state()
         main_word = game_state["current_word"].upper()
     def new_round(event=None):
+        if not  is_game_active:
+            print("Game not active")
+            return
         scores_dialog.open = False
+        nonlocal  score
 
         load_game_state()
         if game_state["time_remaining"] <= 3:
@@ -124,6 +134,7 @@ def IndexView(page:ft.Page, params):
         score=0
         score_text.value=score
         show_status_message("")
+        user_words_textbox.value=""
         page.update()
 
     def CreateAppBar():
@@ -140,6 +151,8 @@ def IndexView(page:ft.Page, params):
     player_name="John"
     game_state ={}
     main_word = ""
+    is_game_active = True
+
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
 
     appbar = CreateAppBar()
@@ -178,7 +191,10 @@ def IndexView(page:ft.Page, params):
          third_row_buttons,status_message_box,user_words_textbox],
 
 
+
     )
     )
     page.update()
+    page.on_disconnect = page_on_disconnect
+    page.on_connect = page_on_connect
     new_round()
