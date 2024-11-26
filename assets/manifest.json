@@ -1,9 +1,9 @@
 {
-  "name": "Flet Template",
-  "short_name": "Flet Template",
+  "name": "Seven Spell",
+  "short_name": "Seven Spell",
   "start_url": ".",
   "display": "standalone",
-  "description": "Flet Template by LSHSS",
+  "description": "Seven Spell by LSHSS",
   "icons": [
     {
       "src": "icons/icon-192.png",
