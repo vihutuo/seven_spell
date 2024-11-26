@@ -1,11 +1,16 @@
 import requests
 import time
-from datetime import datetime
+from datetime import datetime,timezone
 import math
 
 class GameClient:
     def __init__(self, base_url):
         self.base_url = base_url
+    def get_time_remaining_for_next_round(self,game_state):
+        target_utc_time = datetime.strptime(game_state["game_end_time_utc"], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+        current_utc_time = datetime.now(timezone.utc)
+        time_difference = (target_utc_time - current_utc_time).total_seconds()
+        return  math.ceil(time_difference)
 
     def get_game_state(self):
         """Fetches the current game state (active or inactive round)."""
@@ -13,6 +18,7 @@ class GameClient:
 
         if response.status_code == 200:
             gs =  response.json()
+            print(gs)
             time_format = "%Y-%m-%dT%H:%M:%S.%fZ"
             gs["time_remaining"]= datetime.strptime(gs["score_submission_deadline_utc"], time_format) -  datetime.strptime(gs["current_time_utc"],time_format)
             gs["time_remaining"] = int(gs["time_remaining"].total_seconds()) - 3 # 3 seconds buffer
@@ -20,6 +26,7 @@ class GameClient:
                                                      time_format) - datetime.strptime(gs["current_time_utc"],
                                                                                       time_format)
             gs["next_round_starts_in"] = math.ceil((gs["next_round_starts_in"].total_seconds()))
+            gs["current_local_time"] = time.time()
             return gs
         else:
             raise Exception(f"Failed to fetch game state: {response.text}")

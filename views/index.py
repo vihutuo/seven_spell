@@ -21,10 +21,9 @@ def IndexView(page:ft.Page, params):
     def fetch_results(e):
        all_scores=game_client.fetch_scores()
        scores_dialog.content.value =all_scores
-
        page.open(scores_dialog)
-
-       start_main_timer(12,new_round)
+       secs  = game_client.get_time_remaining_for_next_round(game_state)
+       start_main_timer(secs,new_round)
     def score_submit_screen():
         dlg_modal = ft.AlertDialog(
             modal=True,
