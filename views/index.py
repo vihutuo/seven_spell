@@ -153,7 +153,7 @@ def IndexView(page:ft.Page, params):
     main_word = ""
     is_game_active = True
 
-    game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
+    game_client = server.GameClient("https://wordgameserver-production.up.railway.app/")
 
     appbar = CreateAppBar()
 
