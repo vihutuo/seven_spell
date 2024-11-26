@@ -4,8 +4,29 @@ from modules import my_module
 from modules import spell_server as server
 def IndexView(page:ft.Page, params):
     def timer_end(e):
-        print("Timer end")
+        game_client.submit_score(player_name,score,main_word.lower())
+        submit_button.disabled=True
+        status_message_box.value="Score submitted. Waiting for result"
+        page.update()
+
         #timer.restart_timer()
+    def score_submit_screen():
+        dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Please confirm"),
+            content=ft.Text("Do you really want to delete all those files?"),
+            actions=[
+                ft.TextButton("Yes"),
+                ft.TextButton("No"),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            on_dismiss=lambda e: page.add(
+                ft.Text("Modal dialog dismissed"),
+            ),
+        )
+        page.open(dlg_modal)
+    def scores_display_screen():
+        print("score display screen")
     def bottom_button_clicked(e):
         print("bottom button clicked")
         x = e.control.data
@@ -33,6 +54,12 @@ def IndexView(page:ft.Page, params):
               bottom_btn.text= bottom_btn.data
               bottom_btn.disabled = False
           page.update()
+    def calculate_score(word):
+        nonlocal score
+        score+=len(word)
+        score_text.value = str(score)
+        page.update()
+
     def submit_click(e):
         word = ""
         for top_btn in top_row_buttons.controls:
@@ -53,7 +80,7 @@ def IndexView(page:ft.Page, params):
             print("not in all word")
         if is_valid:
             user_words.append(word)
-
+            calculate_score(word)
             user_words_textbox.value+= word + " "
             page.update()
         else:
@@ -78,14 +105,18 @@ def IndexView(page:ft.Page, params):
             bgcolor=ft.colors.SURFACE_VARIANT
         )
         return app_bar
+    #game_variable
+    score=0
+    player_name="John"
+
     appbar = CreateAppBar()
     game_client = server.GameClient("https://wordgameserver-production-e5c6.up.railway.app/")
     game_state = game_client.get_game_state()
-    timer = mytimer.Countdown(game_state["time_remaining"], timer_end)
+
     print(game_state)
-    word = game_state["current_word"].upper()
+    main_word = game_state["current_word"].upper()
     #word = "LOOP"
-    print(word)
+    print(main_word)
     top_row_buttons = ft.Row(spacing=10,
         alignment=ft.MainAxisAlignment.CENTER)
     bottom_row_buttons = ft.Row(spacing=10,
@@ -98,16 +129,26 @@ def IndexView(page:ft.Page, params):
     third_row_buttons.controls.append(submit_button)
     third_row_buttons.controls.append(clear_button)
     user_words_textbox=ft.Text("")
-    new_round(word)
+    new_round(main_word)
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
     print(all_words[1:10])
     print("ten")
     user_words=[]
+    score_text=ft.Text("0")
+    score_row=ft.Row(controls=[ft.Text("Score"),score_text])
+    timer = mytimer.Countdown(game_state["time_remaining"]-3, timer_end)
+    status_message_box=ft.Text()
     page.views.append(ft.View(
         "/",
-        [appbar, timer, top_row_buttons, bottom_row_buttons,third_row_buttons,user_words_textbox],
+        [appbar,score_row, timer, top_row_buttons, bottom_row_buttons,
+         third_row_buttons,status_message_box,user_words_textbox],
 
 
     )
     )
+
+    if game_state["time_remaining"] > 0:
+        pass
+    else:
+        status_message_box.value="Waiting to start next round in "+str(game_state["next_round_starts_in"])+" sec"
     page.update()
