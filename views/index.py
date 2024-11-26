@@ -14,9 +14,12 @@ def IndexView(page:ft.Page, params):
         game_client.submit_score(player_name,score,main_word.lower())
         submit_button.disabled=True
         status_message_box.value="Score submitted. Waiting for result"
+        start_main_timer(5,fetch_results)
         page.update()
-
-        #timer.restart_timer()
+    def fetch_results(e):
+       all_scores=game_client.fetch_scores()
+       print(all_scores)
+       start_main_timer(12,new_round)
     def score_submit_screen():
         dlg_modal = ft.AlertDialog(
             modal=True,
@@ -95,6 +98,7 @@ def IndexView(page:ft.Page, params):
     def load_game_state():
         nonlocal game_state
         nonlocal main_word
+        nonlocal score
         game_state = game_client.get_game_state()
         main_word = game_state["current_word"].upper()
     def new_round(event=None):
@@ -114,6 +118,8 @@ def IndexView(page:ft.Page, params):
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
         submit_button.disabled = False
+        score=0
+        score_text.value=score
         show_status_message("")
         page.update()
 
@@ -150,13 +156,16 @@ def IndexView(page:ft.Page, params):
 
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
     user_words=[]
-    score_text=ft.Text("0")
-    score_row=ft.Row(controls=[ft.Text("Score"),score_text])
+    score_text=ft.Text("0",style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD))
     main_timer = mytimer.Countdown(0, score_submit_event)
+
+    score_row=ft.Row(controls=[ft.Text("SCORE",style=ft.TextStyle(size=20,weight=ft.FontWeight.BOLD)),score_text, main_timer],
+                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
+
     status_message_box=ft.Text()
     page.views.append(ft.View(
         "/",
-        [appbar,score_row, main_timer, top_row_buttons, bottom_row_buttons,
+        [appbar,score_row,  top_row_buttons, bottom_row_buttons,
          third_row_buttons,status_message_box,user_words_textbox],
 
 
