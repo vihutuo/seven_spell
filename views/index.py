@@ -125,8 +125,8 @@ def IndexView(page:ft.Page, params):
         top_row_buttons.controls.clear()
         bottom_row_buttons.controls.clear()
         for x in main_word:
-            bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked)
-            bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x)
+            bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked, width=60)
+            bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x, width=60)
 
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
