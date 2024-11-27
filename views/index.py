@@ -19,7 +19,9 @@ def IndexView(page:ft.Page, params):
         main_timer.start()
     def score_submit_event(e):
         game_client.submit_score(player_name,score,main_word.lower())
-        submit_button.disabled=True
+        top_row_buttons.disabled = True
+        bottom_row_buttons.disabled = True
+        third_row_buttons.disabled = True
         status_message_box.value="Score submitted. Waiting for result"
         start_main_timer(5,fetch_results)
         page.update()
@@ -141,11 +143,13 @@ def IndexView(page:ft.Page, params):
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
-        submit_button.disabled = False
         score=0
         score_text.value=score
         show_status_message("")
         user_words_textbox.value=""
+        top_row_buttons.disabled = False
+        bottom_row_buttons.disabled = False
+        third_row_buttons.disabled = False
         page.update()
 
     def CreateAppBar():
@@ -186,7 +190,6 @@ def IndexView(page:ft.Page, params):
 
     score_row=ft.Row(controls=[ft.Text("SCORE",style=ft.TextStyle(size=20,weight=ft.FontWeight.BOLD)),score_text, main_timer],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
-
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
         modal=True,
