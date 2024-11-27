@@ -125,8 +125,18 @@ def IndexView(page:ft.Page, params):
         top_row_buttons.controls.clear()
         bottom_row_buttons.controls.clear()
         for x in main_word:
-            bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked, width=60)
-            bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x, width=60)
+            bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked,
+                                    width=40,
+                                    style=ft.ButtonStyle(
+                                        shape=ft.RoundedRectangleBorder(radius=7),
+                                        padding=4)
+                                    )
+            bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x,
+                                  width=40,
+                                  style=ft.ButtonStyle(
+                                      shape=ft.RoundedRectangleBorder(radius=20),
+                                      padding=4)
+            )
 
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
@@ -158,10 +168,8 @@ def IndexView(page:ft.Page, params):
 
     appbar = CreateAppBar()
 
-    top_row_buttons = ft.Row(spacing=5,
-        alignment=ft.MainAxisAlignment.CENTER)
-    bottom_row_buttons = ft.Row(spacing=5,
-        alignment=ft.MainAxisAlignment.CENTER)
+    top_row_buttons = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
+    bottom_row_buttons = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
     third_row_buttons = ft.Row(spacing=100,
         alignment=ft.MainAxisAlignment.CENTER)
     submit_button = ft.OutlinedButton("Submit" ,on_click=submit_click)
