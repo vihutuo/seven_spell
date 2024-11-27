@@ -98,6 +98,7 @@ def IndexView(page:ft.Page, params):
     def load_game_state():
         nonlocal game_state
         nonlocal main_word
+        nonlocal score
         game_state = game_client.get_game_state()
         main_word = game_state["current_word"].upper()
     def new_round(event=None):
@@ -117,6 +118,8 @@ def IndexView(page:ft.Page, params):
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
         submit_button.disabled = False
+        score=0
+        score_text.value=score
         show_status_message("")
         page.update()
 
