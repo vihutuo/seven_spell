@@ -49,7 +49,7 @@ class GameClient:
 
     def fetch_scores(self):
         """Fetches the scores for the current round."""
-        response = requests.get(f"{self.base_url}/fetch-scores")
+        response = requests.get(f"{self.base_url}/get_scores")
 
         if response.status_code == 200:
             return response.json()["scores"]
