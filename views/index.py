@@ -127,6 +127,7 @@ def IndexView(page:ft.Page, params):
         for x in main_word:
             bt1 = ft.OutlinedButton(" ",on_click=top_button_clicked)
             bt2 = ft.FilledButton(x, on_click=bottom_button_clicked, data=x)
+
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
