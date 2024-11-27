@@ -157,11 +157,11 @@ def IndexView(page:ft.Page, params):
 
     appbar = CreateAppBar()
 
-    top_row_buttons = ft.Row(spacing=10,
+    top_row_buttons = ft.Row(spacing=5,
         alignment=ft.MainAxisAlignment.CENTER)
-    bottom_row_buttons = ft.Row(spacing=10,
+    bottom_row_buttons = ft.Row(spacing=5,
         alignment=ft.MainAxisAlignment.CENTER)
-    third_row_buttons = ft.Row(spacing=200,
+    third_row_buttons = ft.Row(spacing=100,
         alignment=ft.MainAxisAlignment.CENTER)
     submit_button = ft.OutlinedButton("Submit" ,on_click=submit_click)
     clear_button = ft.OutlinedButton("Clear" ,on_click=clear_top_buttons)
