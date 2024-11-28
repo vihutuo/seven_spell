@@ -260,11 +260,11 @@ def IndexView(page:ft.Page, params):
 
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
     user_words=[]
-    score_text=ft.Text("0",style=ft.TextStyle(size=20), width=120)
+    score_text=ft.Text("0",style=ft.TextStyle(size=20), )
     update_score(0)
     main_timer = mytimer.Countdown(0, score_submit_event)
 
-    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE, width=140,
+    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
                              spans=[ft.TextSpan(player_name, on_click=player_name_clicked,
                                                 style=ft.TextStyle(
                                                     decoration=ft.TextDecoration.UNDERLINE,
@@ -283,7 +283,7 @@ def IndexView(page:ft.Page, params):
         thickness=12  # Line thickness
     )
 
-    score_row=ft.Row(controls=[txt_playername,  score_text,  icon_timer,main_timer],
+    score_row=ft.Row(controls=[txt_playername,  score_text,  ft.Row(controls=[icon_timer,main_timer], width = 80)],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
