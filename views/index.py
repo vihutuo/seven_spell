@@ -2,6 +2,7 @@ import flet as ft
 from modules import mytimer
 from modules import my_module
 from modules import spell_server as server
+import random
 def IndexView(page:ft.Page, params):
     def page_on_connect(e):
          print("Session connect")
@@ -12,6 +13,41 @@ def IndexView(page:ft.Page, params):
         is_game_active = False
     def show_status_message(msg):
         status_message_box.value = msg
+
+    def get_high_score_table(json_data):
+        # print("Drawinh HS table")
+        data = json_data
+        # print(data)
+        tbl = ft.DataTable(columns=[
+            ft.DataColumn(ft.Text("Name")),
+            ft.DataColumn(ft.Text("Score"), numeric=True),
+        ],
+            heading_row_height=0,
+            column_spacing=50,
+            rows=[]
+        )
+
+        for item in data:
+
+             #    if analytics.userid == item["id"]:
+             #       c = ft.colors.SECONDARY_CONTAINER
+             #   else:
+             #      c = ft.colors.TRANSPARENT
+                if item["player"] == player_name and  item["score"] == score:
+                    c = ft.colors.SECONDARY_CONTAINER
+                else:
+                    c = ft.colors.TRANSPARENT
+
+                tbl.rows.append( ft.DataRow(color=c,
+                                           cells=[
+                                               ft.DataCell(ft.Text(item["player"])),
+                                               ft.DataCell(ft.Text(item["score"])),
+
+                                           ]))
+
+
+        return tbl
+
     def start_main_timer(seconds,on_end):
         # helper function that starts main timer
         main_timer.initial_seconds = seconds
@@ -29,7 +65,8 @@ def IndexView(page:ft.Page, params):
 
     def fetch_results(e):
        all_scores=game_client.fetch_scores()
-       scores_dialog.content.value =all_scores
+       print(all_scores)
+       scores_dialog.content  =get_high_score_table(all_scores)
        page.open(scores_dialog)
        secs  = game_client.get_time_remaining_for_next_round(game_state)
        start_main_timer(secs,new_round)
@@ -79,7 +116,40 @@ def IndexView(page:ft.Page, params):
         score+=len(word)
         score_text.value = str(score)
         page.update()
+    def update_player_name(new_name):
+            nonlocal player_name
+            player_name = new_name
+            txt_playername.spans[0].text = player_name
+            #page.update()
 
+    def player_name_clicked(e):
+        txt_name = ft.Ref[ft.TextField]()
+
+        def close_dlg_ok(e):
+            txt_name.current.value = txt_name.current.value.strip()
+            if len(txt_name.current.value) == 0:
+                return
+            update_player_name(txt_name.current.value)
+            dlg_modal.open = False
+            page.update()
+
+
+        def close_dlg_cancel(e):
+            dlg_modal.open = False
+            page.update()
+
+        dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Enter your name"),
+            content=ft.TextField(ref=txt_name, hint_text="Enter your name", value=player_name, max_length=10),
+            actions=[
+                ft.TextButton("OK", on_click=close_dlg_ok),
+                ft.TextButton("Cancel", on_click=close_dlg_cancel),
+            ],
+            actions_alignment=ft.MainAxisAlignment.CENTER,
+        )
+        page.open(dlg_modal)
+        page.update()
     def submit_click(e):
         word = ""
         for top_btn in top_row_buttons.controls:
@@ -163,7 +233,8 @@ def IndexView(page:ft.Page, params):
         return app_bar
     #game_variable
     score=0
-    player_name="John"
+    player_name = "Player" + str(random.randrange(1, 1000))
+
     game_state ={}
     main_word = ""
     is_game_active = True
@@ -188,7 +259,18 @@ def IndexView(page:ft.Page, params):
     score_text=ft.Text("0",style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD))
     main_timer = mytimer.Countdown(0, score_submit_event)
 
-    score_row=ft.Row(controls=[ft.Text("SCORE",style=ft.TextStyle(size=20,weight=ft.FontWeight.BOLD)),score_text, main_timer],
+    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
+                             spans=[ft.TextSpan(player_name, on_click=player_name_clicked,
+                                                style=ft.TextStyle(
+                                                    decoration=ft.TextDecoration.UNDERLINE,
+                                                    decoration_style=ft.TextDecorationStyle.DOTTED,
+                                                    size=18,
+                                                    color=ft.colors.SECONDARY
+                                                )
+                                                )
+                                    ]
+                             )
+    score_row=ft.Row(controls=[txt_playername, ft.Text("SCORE",style=ft.TextStyle(size=20,weight=ft.FontWeight.BOLD)),score_text, main_timer],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
@@ -197,6 +279,7 @@ def IndexView(page:ft.Page, params):
         content=ft.Text(""),
         actions_alignment=ft.MainAxisAlignment.END
     )
+
     page.views.append(ft.View(
         "/",
         [appbar,score_row,  top_row_buttons, bottom_row_buttons,
