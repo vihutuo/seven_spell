@@ -7,6 +7,8 @@ def IndexView(page:ft.Page, params):
     def update_score(s):
         nonlocal score
         score += s
+        if score< 0:
+            score = 0
         score_text.value = "Score : " + str(score)
     def page_on_connect(e):
          print("Session connect")
@@ -58,13 +60,15 @@ def IndexView(page:ft.Page, params):
         main_timer.on_end = on_end
         main_timer.start()
     def score_submit_event(e):
-        game_client.submit_score(player_name,score,main_word.lower())
+
         top_row_buttons.disabled = True
         bottom_row_buttons.disabled = True
         third_row_buttons.disabled = True
-        status_message_box.value="Score submitted. Waiting for result"
-        start_main_timer(5,fetch_results)
+        status_message_box.value = "Score submitted. Waiting for result"
         page.update()
+        game_client.submit_score(player_name, score, main_word.lower())
+        start_main_timer(5,fetch_results)
+
 
 
     def fetch_results(e):
@@ -214,9 +218,8 @@ def IndexView(page:ft.Page, params):
             top_row_buttons.controls.append(bt1)
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
-        score=0
-        score_text.value=score
-        show_status_message("")
+        update_score(-score)
+        show_status_message("Make 3+ letter words")
         user_words_textbox.value=""
         top_row_buttons.disabled = False
         bottom_row_buttons.disabled = False
