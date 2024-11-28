@@ -4,6 +4,10 @@ from modules import my_module
 from modules import spell_server as server
 import random
 def IndexView(page:ft.Page, params):
+    def update_score(s):
+        nonlocal score
+        score += s
+        score_text.value = "Score : " + str(score)
     def page_on_connect(e):
          print("Session connect")
 
@@ -111,11 +115,7 @@ def IndexView(page:ft.Page, params):
               bottom_btn.text= bottom_btn.data
               bottom_btn.disabled = False
           page.update()
-    def calculate_score(word):
-        nonlocal score
-        score+=len(word)
-        score_text.value = str(score)
-        page.update()
+
     def update_player_name(new_name):
             nonlocal player_name
             player_name = new_name
@@ -170,7 +170,8 @@ def IndexView(page:ft.Page, params):
             print("not in all word")
         if is_valid:
             user_words.append(word)
-            calculate_score(word)
+            add_score = len(word)
+            update_score(add_score)
             user_words_textbox.value+= word + " "
             page.update()
         else:
@@ -257,6 +258,7 @@ def IndexView(page:ft.Page, params):
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
     user_words=[]
     score_text=ft.Text("0",style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD))
+    update_score(0)
     main_timer = mytimer.Countdown(0, score_submit_event)
 
     txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
@@ -270,7 +272,7 @@ def IndexView(page:ft.Page, params):
                                                 )
                                     ]
                              )
-    score_row=ft.Row(controls=[txt_playername, ft.Text("SCORE",style=ft.TextStyle(size=20,weight=ft.FontWeight.BOLD)),score_text, main_timer],
+    score_row=ft.Row(controls=[txt_playername, score_text, main_timer],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
@@ -279,14 +281,24 @@ def IndexView(page:ft.Page, params):
         content=ft.Text(""),
         actions_alignment=ft.MainAxisAlignment.END
     )
-
+    content_width = 360
+    user_words_row = ft.Row(controls=[user_words_textbox],  alignment=ft.alignment.top_left, wrap=True, width=content_width)
+    #page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    all_content = ft.Container(
+        content=ft.Column(
+            controls=[score_row,  top_row_buttons, bottom_row_buttons,
+                      status_message_box,third_row_buttons,user_words_row],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=10,
+        ),
+        alignment=ft.alignment.center,
+        width=content_width,  # Set a specific width
+        padding=0,
+        #border_radius=10,
+        #border=ft.border.all(1, ft.colors.OUTLINE),
+    )
     page.views.append(ft.View(
-        "/",
-        [appbar,score_row,  top_row_buttons, bottom_row_buttons,
-         third_row_buttons,status_message_box,user_words_textbox],
-
-
-
+        "/",[appbar,all_content],horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
     )
     page.update()
