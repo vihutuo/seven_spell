@@ -260,11 +260,11 @@ def IndexView(page:ft.Page, params):
 
     all_words=my_module.GetAllWords("data/3_letter_plus_words.txt")
     user_words=[]
-    score_text=ft.Text("0",style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD))
+    score_text=ft.Text("0",style=ft.TextStyle(size=20), width=120)
     update_score(0)
     main_timer = mytimer.Countdown(0, score_submit_event)
 
-    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
+    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE, width=140,
                              spans=[ft.TextSpan(player_name, on_click=player_name_clicked,
                                                 style=ft.TextStyle(
                                                     decoration=ft.TextDecoration.UNDERLINE,
@@ -275,7 +275,15 @@ def IndexView(page:ft.Page, params):
                                                 )
                                     ]
                              )
-    score_row=ft.Row(controls=[txt_playername, score_text, main_timer],
+    icon_timer = ft.Icon(name=ft.icons.SCHEDULE, color=ft.colors.SECONDARY)
+    line_1 = ft.Divider(height=1, color=ft.colors.SECONDARY_CONTAINER)
+    vertical_line = ft.VerticalDivider(
+        width=20,  # Line width
+        color= ft.colors.AMBER,
+        thickness=12  # Line thickness
+    )
+
+    score_row=ft.Row(controls=[txt_playername,  score_text,  icon_timer,main_timer],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
@@ -289,7 +297,7 @@ def IndexView(page:ft.Page, params):
     #page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     all_content = ft.Container(
         content=ft.Column(
-            controls=[score_row,  top_row_buttons, bottom_row_buttons,
+            controls=[score_row, line_1, top_row_buttons, bottom_row_buttons,
                       status_message_box,third_row_buttons,user_words_row],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10,

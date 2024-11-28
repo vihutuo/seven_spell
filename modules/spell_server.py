@@ -27,6 +27,7 @@ class GameClient:
                                                                                       time_format)
             gs["next_round_starts_in"] = math.ceil((gs["next_round_starts_in"].total_seconds()))
             gs["current_local_time"] = time.time()
+            print(gs)
             return gs
         else:
             raise Exception(f"Failed to fetch game state: {response.text}")

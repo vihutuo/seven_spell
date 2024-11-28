@@ -8,6 +8,7 @@ class Countdown(ft.Text):
         self.seconds = seconds
         self.on_end = on_end
         self.running = False
+        self.size = 20
     def start(self):
         self.running = True
         self.seconds = self.initial_seconds
