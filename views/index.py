@@ -93,7 +93,8 @@ def IndexView(page:ft.Page, params):
     def scores_display_screen():
         print("score display screen")
     def bottom_button_clicked(e):
-        print("bottom button clicked")
+        if e.control.text == " ":
+            return
         x = e.control.data
         for btn in top_row_buttons.controls:
             if btn.text == " ":
@@ -103,7 +104,6 @@ def IndexView(page:ft.Page, params):
                 break
         page.update()
     def top_button_clicked(e):
-        print("top button clicked")
         x=e.control.text
         for btn in bottom_row_buttons.controls:
             if btn.data == x and btn.text == " ":
