@@ -3,6 +3,8 @@ from modules import mytimer
 from modules import my_module
 from modules import spell_server as server
 import random
+import threading
+
 def IndexView(page:ft.Page, params):
     def update_score(s):
         nonlocal score
@@ -10,6 +12,8 @@ def IndexView(page:ft.Page, params):
         if score< 0:
             score = 0
         score_text.value = "Score : " + str(score)
+
+
     def page_on_connect(e):
          print("Session connect")
 
@@ -25,6 +29,7 @@ def IndexView(page:ft.Page, params):
         data = json_data
         # print(data)
         tbl = ft.DataTable(columns=[
+            ft.DataColumn(ft.Text("Rank")),
             ft.DataColumn(ft.Text("Name")),
             ft.DataColumn(ft.Text("Score"), numeric=True),
         ],
@@ -32,7 +37,7 @@ def IndexView(page:ft.Page, params):
             column_spacing=50,
             rows=[]
         )
-
+        rank=1
         for item in data:
 
              #    if analytics.userid == item["id"]:
@@ -46,10 +51,12 @@ def IndexView(page:ft.Page, params):
 
                 tbl.rows.append( ft.DataRow(color=c,
                                            cells=[
+                                               ft.DataCell(ft.Text(rank)),
                                                ft.DataCell(ft.Text(item["player"])),
                                                ft.DataCell(ft.Text(item["score"])),
 
                                            ]))
+                rank+=1
 
 
         return tbl
@@ -78,18 +85,7 @@ def IndexView(page:ft.Page, params):
        page.open(scores_dialog)
        secs  = game_client.get_time_remaining_for_next_round(game_state)
        start_main_timer(secs,new_round)
-    def score_submit_screen():
-        dlg_modal = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Scores"),
-            content=ft.Text("Do you really want to delete all those files?"),
 
-            actions_alignment=ft.MainAxisAlignment.END,
-            on_dismiss=lambda e: page.add(
-                ft.Text("Modal dialog dismissed"),
-            ),
-        )
-        page.open(dlg_modal)
     def scores_display_screen():
         print("score display screen")
     def bottom_button_clicked(e):
@@ -142,6 +138,8 @@ def IndexView(page:ft.Page, params):
             dlg_modal.open = False
             page.update()
 
+
+
         dlg_modal = ft.AlertDialog(
             modal=True,
             title=ft.Text("Enter your name"),
@@ -154,6 +152,16 @@ def IndexView(page:ft.Page, params):
         )
         page.open(dlg_modal)
         page.update()
+    def hide_points():
+            txt_points.opacity = 0
+            txt_points.update()
+            print("Hide points")
+
+    def points_animation_end(e):
+
+        if txt_points.opacity != 0:
+            threading.Timer(1, hide_points).start()
+
     def submit_click(e):
         word = ""
         for top_btn in top_row_buttons.controls:
@@ -175,11 +183,16 @@ def IndexView(page:ft.Page, params):
         if is_valid:
             user_words.append(word)
             add_score = len(word)
+            if len(word)==len(main_word):
+                add_score=int(add_score*1.5)
             update_score(add_score)
             user_words_textbox.value+= word + " "
+            txt_points.value = "+" + str(add_score)
+            txt_points.opacity = 1
             page.update()
         else:
             print("invalid")
+
     def load_game_state():
         nonlocal game_state
         nonlocal main_word
@@ -282,6 +295,10 @@ def IndexView(page:ft.Page, params):
         color= ft.colors.AMBER,
         thickness=12  # Line thickness
     )
+    txt_points = ft.Text("",
+                         animate_opacity=600,
+                         opacity=0,
+                         on_animation_end=points_animation_end)
 
     score_row=ft.Row(controls=[txt_playername,  score_text,  ft.Row(controls=[icon_timer,main_timer], width = 80)],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
@@ -297,7 +314,7 @@ def IndexView(page:ft.Page, params):
     #page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     all_content = ft.Container(
         content=ft.Column(
-            controls=[score_row, line_1, top_row_buttons, bottom_row_buttons,
+            controls=[score_row, line_1, ft.Row(controls=[top_row_buttons, txt_points]), bottom_row_buttons,
                       status_message_box,third_row_buttons,user_words_row],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10,
@@ -308,8 +325,18 @@ def IndexView(page:ft.Page, params):
         #border_radius=10,
         #border=ft.border.all(1, ft.colors.OUTLINE),
     )
+    team_name = ft.Text(
+        value="Created by :  Abhinash, Imkongsenup & Sir Vihutuo(Teacher), LSHSS. \nMake as many 3 letter or longer words.",
+        size=15,
+        opacity=0.60,
+        color="#b2b2b2")
     page.views.append(ft.View(
-        "/",[appbar,all_content],horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        "/",[appbar,all_content,ft.Container(
+        content=team_name,
+        border=ft.border.only(
+          top=ft.border.BorderSide(1, ft.colors.SECONDARY_CONTAINER)),
+        margin=ft.margin.only(top=250))
+             ],horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
     )
     page.update()
