@@ -2,19 +2,28 @@ import asyncio
 import flet as ft
 
 class Countdown(ft.Text):
-    def __init__(self, seconds, on_end):
+    def __init__(self):
         super().__init__()
-        self.initial_seconds = seconds
-        self.seconds = seconds
-        self.on_end = on_end
+        self._initial_seconds = 0
+        self._seconds = 0
+        self.on_end = None
         self.running = False
         self.size = 20
-    def start(self):
+        self._task = None
+    def start(self,seconds,on_end):
+        # cancel an existing task if still running
+        self.running = False
+
+        self._seconds = seconds
+        self._initial_seconds = seconds
+        self.on_end = on_end
+
         self.running = True
-        self.seconds = self.initial_seconds
-        self.page.run_task(self.update_timer)
+        # run the loop
+        self._task = self.page.run_task(self.update_timer)
+
     def reset_timer(self):
-        self.seconds = self.initial_seconds
+        self._seconds = self._initial_seconds
 
 
     def did_mount(self):
@@ -23,14 +32,14 @@ class Countdown(ft.Text):
         self.running = False
 
     async def update_timer(self):
-        while self.seconds>=0 and self.running:
+        while self._seconds>=0 and self.running:
 
             #mins, secs = divmod(self.seconds, 60)
             #self.value = "{:02d}:{:02d}".format(mins, secs)
-            self.value = self.seconds
+            self.value = self._seconds
             self.update()
             await asyncio.sleep(1)
-            self.seconds -= 1
+            self._seconds -= 1
 
         e = None
         self.on_end(e)

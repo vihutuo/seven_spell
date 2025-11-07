@@ -63,9 +63,7 @@ def IndexView(page:ft.Page, params):
 
     def start_main_timer(seconds,on_end):
         # helper function that starts main timer
-        main_timer.initial_seconds = seconds
-        main_timer.on_end = on_end
-        main_timer.start()
+        main_timer.start(seconds,on_end)
     def score_submit_event(e):
 
         top_row_buttons.disabled = True
@@ -275,7 +273,7 @@ def IndexView(page:ft.Page, params):
     user_words=[]
     score_text=ft.Text("0",style=ft.TextStyle(size=20), )
     update_score(0)
-    main_timer = mytimer.Countdown(0, score_submit_event)
+    main_timer = mytimer.Countdown()
 
     txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
                              spans=[ft.TextSpan(player_name, on_click=player_name_clicked,
