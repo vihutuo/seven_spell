@@ -42,4 +42,5 @@ class Countdown(ft.Text):
             self._seconds -= 1
 
         e = None
+        self.running = False
         self.on_end(e)

@@ -4,6 +4,7 @@ from modules import my_module
 from modules import spell_server as server
 import random
 import threading
+from modules import log
 
 def IndexView(page:ft.Page, params):
     def update_score(s):
@@ -15,7 +16,12 @@ def IndexView(page:ft.Page, params):
 
 
     def page_on_connect(e):
-         print("Session connect")
+        if not main_timer.running:
+            print("On connect new round started")
+            nonlocal is_game_active
+            is_game_active = True
+            new_round()
+        print("Session connect")
 
     def page_on_disconnect(e):
         print("Session disconnect")
@@ -71,10 +77,12 @@ def IndexView(page:ft.Page, params):
         third_row_buttons.disabled = True
         status_message_box.value = "Score submitted. Waiting for result"
         page.update()
-        game_client.submit_score(player_name, score, main_word.lower())
+        try:
+            game_client.submit_score(player_name, score, main_word.lower())
+        except Exception as e:
+            log.error(e)
+
         start_main_timer(5,fetch_results)
-
-
 
     def fetch_results(e):
        all_scores=game_client.fetch_scores()
