@@ -16,12 +16,13 @@ def IndexView(page:ft.Page, params):
 
 
     def page_on_connect(e):
+        log.info("Session connect")
         if not main_timer.running:
-            print("On connect new round started")
+            log.info("On connect new round started")
             nonlocal is_game_active
             is_game_active = True
             new_round()
-        print("Session connect")
+
 
     def page_on_disconnect(e):
         print("Session disconnect")
