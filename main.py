@@ -6,7 +6,11 @@ from views.simple_view import SimpleView
 def main(page: ft.Page):
   page.title = "Seven Spell"
   #page.theme_mode = "light"
-  page.theme = ft.Theme(color_scheme_seed=ft.colors.GREEN)
+  page.theme = ft.Theme(
+    color_scheme_seed=ft.colors.BLUE,
+
+  )
+
   page.fonts = {
     "Kanit": "https://raw.githubusercontent.com/google/fonts/master/ofl/kanit/Kanit-Bold.ttf",
     "playwrite": "fonts/playwrite.ttf",

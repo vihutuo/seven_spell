@@ -4,9 +4,17 @@ from modules import my_module
 from modules import spell_server as server
 import random
 import threading
+from modules import users_manager as um
 from modules import log
 
 def IndexView(page:ft.Page, params):
+    def on_pubsub(msg):
+        if msg == "users_changed":
+            print("users_changed")
+            user_count_txt.value = UM.get_user_count()
+            page.update()
+
+    page.pubsub.subscribe(on_pubsub)
     def update_score(s):
         nonlocal score
         score += s
@@ -17,6 +25,7 @@ def IndexView(page:ft.Page, params):
 
     def page_on_connect(e):
         log.info("Session connect")
+        UM.add_user(page.session_id,player_name)
         if not main_timer.running:
             log.info("On connect new round started")
             nonlocal is_game_active
@@ -26,6 +35,7 @@ def IndexView(page:ft.Page, params):
 
     def page_on_disconnect(e):
         print("Session disconnect")
+        UM.remove_user(page.session_id)
         nonlocal  is_game_active
         is_game_active = False
     def show_status_message(msg):
@@ -86,10 +96,14 @@ def IndexView(page:ft.Page, params):
         start_main_timer(5,fetch_results)
 
     def fetch_results(e):
-       all_scores=game_client.fetch_scores()
-       print(all_scores)
-       scores_dialog.content  =get_high_score_table(all_scores)
-       page.open(scores_dialog)
+       try:
+           all_scores=game_client.fetch_scores()
+       except Exception as e:
+           log.error(e)
+       else:
+           print(all_scores)
+           scores_dialog.content  =get_high_score_table(all_scores)
+           page.open(scores_dialog)
        secs  = game_client.get_time_remaining_for_next_round(game_state)
        start_main_timer(secs,new_round)
 
@@ -127,6 +141,8 @@ def IndexView(page:ft.Page, params):
             nonlocal player_name
             player_name = new_name
             txt_playername.spans[0].text = player_name
+            UM.update_user(page.session_id, username=player_name)
+
             #page.update()
 
     def player_name_clicked(e):
@@ -211,7 +227,6 @@ def IndexView(page:ft.Page, params):
             return
         scores_dialog.open = False
         nonlocal  score
-
         load_game_state()
         if game_state["time_remaining"] <= 3:
             status_message_box.value = "Waiting to start next round "
@@ -252,19 +267,27 @@ def IndexView(page:ft.Page, params):
             leading_width=40,
             title=ft.Text("Seven Spell"),
             #center_title=False,
-            bgcolor=ft.colors.SURFACE_VARIANT
+            bgcolor=ft.colors.SURFACE_VARIANT,
+            actions=[
+                ft.Text("Online : "),
+                ft.Container(
+                    content=user_count_txt,
+                    margin=ft.margin.only(right=20)  # ✅ Right margin
+                )
+            ],
         )
         return app_bar
     #game_variable
     score=0
+    UM = um.UserManager(page)
     player_name = "Player" + str(random.randrange(1, 1000))
-
+    UM.add_user(page.session_id, player_name)
     game_state ={}
     main_word = ""
     is_game_active = True
 
     game_client = server.GameClient("https://wordgameserver1.fly.dev/")
-
+    user_count_txt = ft.Text(value="0", style=ft.TextThemeStyle.LABEL_LARGE)  #used in AppBar
     appbar = CreateAppBar()
 
     top_row_buttons = ft.Row(alignment=ft.MainAxisAlignment.CENTER)
