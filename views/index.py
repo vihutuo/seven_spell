@@ -254,7 +254,7 @@ def IndexView(page:ft.Page, params):
             bottom_row_buttons.controls.append(bt2)
         start_main_timer(game_state["time_remaining"], score_submit_event)
         update_score(-score)
-        show_status_message("Make 3+ letter words")
+        show_status_message("Make 3 letter or longer words")
         user_words_textbox.value=""
         top_row_buttons.disabled = False
         bottom_row_buttons.disabled = False
