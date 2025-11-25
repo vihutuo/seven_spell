@@ -6,7 +6,7 @@ import random
 import threading
 from modules import users_manager as um
 from modules import log
-
+from modules import player_name_ctrl
 def IndexView(page:ft.Page, params):
     def on_pubsub(msg):
         if msg == "users_changed":
@@ -140,7 +140,6 @@ def IndexView(page:ft.Page, params):
     def update_player_name(new_name):
             nonlocal player_name
             player_name = new_name
-            txt_playername.spans[0].text = player_name
             UM.update_user(page.session_id, username=player_name)
 
             #page.update()
@@ -306,18 +305,6 @@ def IndexView(page:ft.Page, params):
     score_text=ft.Text("0",style=ft.TextStyle(size=20), )
     update_score(0)
     main_timer = mytimer.Countdown()
-
-    txt_playername = ft.Text(style=ft.TextThemeStyle.LABEL_LARGE,
-                             spans=[ft.TextSpan(player_name, on_click=player_name_clicked,
-                                                style=ft.TextStyle(
-                                                    decoration=ft.TextDecoration.UNDERLINE,
-                                                    decoration_style=ft.TextDecorationStyle.DOTTED,
-                                                    size=18,
-                                                    color=ft.colors.SECONDARY
-                                                )
-                                                )
-                                    ]
-                             )
     icon_timer = ft.Icon(name=ft.icons.SCHEDULE, color=ft.colors.SECONDARY)
     line_1 = ft.Divider(height=1, color=ft.colors.SECONDARY_CONTAINER)
     vertical_line = ft.VerticalDivider(
@@ -329,8 +316,8 @@ def IndexView(page:ft.Page, params):
                          animate_opacity=600,
                          opacity=0,
                          on_animation_end=points_animation_end)
-
-    score_row=ft.Row(controls=[txt_playername,  score_text,  ft.Row(controls=[icon_timer,main_timer], width = 80)],
+    player_name_control = player_name_ctrl.PlayerNameControl(player_name,update_player_name)
+    score_row=ft.Row(controls=[player_name_control,  score_text,  ft.Row(controls=[icon_timer,main_timer], width = 80)],
                      alignment=ft.MainAxisAlignment.SPACE_BETWEEN)
     status_message_box=ft.Text()
     scores_dialog = ft.AlertDialog(
